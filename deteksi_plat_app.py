@@ -46,8 +46,15 @@ def process_image(image):
     result = reader.readtext(cropped_image)
     
     # Gabungkan teks dari hasil EasyOCR
-    text_elements_except_last = [item[-2] for item in result] if result else []
-    text_to_display = ' '.join(text_elements_except_last) if text_elements_except_last else "Teks tidak terdeteksi"
+    # Check the number of items in the result
+    if len(result) >= 4:
+        # If 4 or more items, take the first 3 and extract the text
+        text = [item[-2] for item in result[:3]]
+    else:
+        # If less than 4 items, take all items and extract the text
+        text = [item[-2] for item in result] if result else []
+        
+    text_to_display = ' '.join(text) if text else "Teks tidak terdeteksi"
     
     # Gambar persegi panjang pada plat nomor
     res = cv2.rectangle(img, tuple(location[0][0]), tuple(location[2][0]), (0, 255, 0), 3)
